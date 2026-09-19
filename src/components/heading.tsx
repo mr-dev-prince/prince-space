@@ -1,16 +1,12 @@
-import React from "react";
 import { IHeading } from "../interfaces/components";
+import Reveal from "./reveal";
 
-const Heading = ({ text, top }: IHeading) => {
-  const positionClass = top !== undefined ? "absolute left-96 right-96" : "relative";
-  return (
-    <div
-      className={`${positionClass} mx-96 px-3 text-2xl font-serif tracking-wide h-[50px] flex justify-center items-center w-fit`}
-      style={top !== undefined ? { top } : undefined}
-    >
+const Heading = ({ text }: IHeading) => (
+  <Reveal y={10}>
+    <h2 className="flex h-[50px] w-fit items-center px-4 font-serif text-xl tracking-wide sm:px-6 sm:text-2xl">
       {text}
-    </div>
-  );
-};
+    </h2>
+  </Reveal>
+);
 
 export default Heading;

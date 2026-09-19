@@ -1,13 +1,17 @@
 "use client";
 
 import { FaChevronRight } from "react-icons/fa";
-import { IExperience } from "../interfaces/components";
-import Image from "next/image";
 import { useState } from "react";
+import { IProject } from "../interfaces/components";
+import Icon from "./icon";
+import LinkPill from "./link-pill";
 
-const ExperienceCard = ({ data }: { data: IExperience }) => {
+const ProjectCard = ({ data }: { data: IProject }) => {
   const [isOpen, setIsOpen] = useState(false);
   const toggle = () => setIsOpen((open) => !open);
+  const pills = data.links.map((link) => (
+    <LinkPill key={link.label} {...link} />
+  ));
 
   return (
     <div>
@@ -25,31 +29,14 @@ const ExperienceCard = ({ data }: { data: IExperience }) => {
         className="flex cursor-pointer items-center justify-between gap-3 rounded-lg outline-none focus-visible:ring-1 focus-visible:ring-white/30 sm:gap-4"
       >
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 sm:h-12 sm:w-12">
-            <Image
-              src={data.logo}
-              alt={data.company}
-              className="h-7 w-7 object-contain"
-            />
-          </div>
+          <Icon name={data.icon} />
           <div className="flex min-w-0 flex-col">
-            <h3 className="text-base font-medium text-white">{data.company}</h3>
-            <p className="text-xs font-light text-white/60">{data.role}</p>
-            <p className="mt-0.5 text-[11px] font-light text-white/40 sm:hidden">
-              {data.duration}
-              {data.location && ` · ${data.location}`}
-            </p>
+            <h3 className="text-base font-medium text-white">{data.name}</h3>
+            <p className="text-xs font-light text-white/60">{data.tagline}</p>
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-3 sm:gap-5">
-          <div className="hidden flex-col items-end sm:flex">
-            <p className="text-xs font-light text-white/50">{data.duration}</p>
-            {data.location && (
-              <p className="text-[11px] font-light text-white/40">
-                {data.location}
-              </p>
-            )}
-          </div>
+          <div className="hidden items-center gap-2 sm:flex">{pills}</div>
           <FaChevronRight
             size={10}
             color="gray"
@@ -61,6 +48,17 @@ const ExperienceCard = ({ data }: { data: IExperience }) => {
         className={`grid transition-all duration-300 ease-in-out ${isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
       >
         <div className="overflow-hidden">
+          <div className="mt-4 flex flex-wrap gap-2 sm:hidden">{pills}</div>
+          <div className="mt-3 flex flex-wrap gap-2 sm:mt-4">
+            {data.stack.map((tech) => (
+              <span
+                key={tech}
+                className="rounded-lg border border-white/10 bg-white/5 px-2.5 py-0.5 text-xs font-light text-white/60"
+              >
+                {tech}
+              </span>
+            ))}
+          </div>
           <ul className="mt-4 space-y-2">
             {data.description.map((item, index) => (
               <li
@@ -78,4 +76,4 @@ const ExperienceCard = ({ data }: { data: IExperience }) => {
   );
 };
 
-export default ExperienceCard;
+export default ProjectCard;
