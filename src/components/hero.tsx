@@ -46,7 +46,7 @@ const Underlined = ({ children }: { children: React.ReactNode }) => (
 
 const Hero = () => {
   return (
-    <section className="flex w-full flex-col justify-center px-4 py-8 text-white/80 sm:px-6 sm:py-10 md:h-[430px] md:py-0">
+    <section className="flex w-full flex-col justify-center px-4 py-8 text-white/80 sm:px-6 sm:py-10 md:min-h-[430px] md:py-4">
       <div className="mb-5 flex w-full items-start justify-between gap-4">
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
           <div className="h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-white/20 bg-[#1a1a1a] p-1 sm:h-20 sm:w-20">
