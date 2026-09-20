@@ -22,10 +22,10 @@ const ExperienceCard = ({ data }: { data: IExperience }) => {
             toggle();
           }
         }}
-        className="flex cursor-pointer items-center justify-between gap-3 rounded-lg outline-none focus-visible:ring-1 focus-visible:ring-white/30 sm:gap-4"
+        className="flex cursor-pointer items-center justify-between gap-3 rounded-lg outline-none focus-visible:ring-1 focus-visible:ring-ink/30 sm:gap-4"
       >
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 sm:h-12 sm:w-12">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-ink/10 bg-ink/5 sm:h-12 sm:w-12">
             <Image
               src={data.logo}
               alt={data.company}
@@ -33,9 +33,9 @@ const ExperienceCard = ({ data }: { data: IExperience }) => {
             />
           </div>
           <div className="flex min-w-0 flex-col">
-            <h3 className="text-base font-medium text-white">{data.company}</h3>
-            <p className="text-xs font-light text-white/60">{data.role}</p>
-            <p className="mt-0.5 text-[11px] font-light text-white/40 sm:hidden">
+            <h3 className="text-base font-medium text-ink">{data.company}</h3>
+            <p className="text-xs font-light text-ink/60">{data.role}</p>
+            <p className="mt-0.5 text-[11px] font-light text-ink/40 sm:hidden">
               {data.duration}
               {data.location && ` · ${data.location}`}
             </p>
@@ -43,9 +43,9 @@ const ExperienceCard = ({ data }: { data: IExperience }) => {
         </div>
         <div className="flex shrink-0 items-center gap-3 sm:gap-5">
           <div className="hidden flex-col items-end sm:flex">
-            <p className="text-xs font-light text-white/50">{data.duration}</p>
+            <p className="text-xs font-light text-ink/50">{data.duration}</p>
             {data.location && (
-              <p className="text-[11px] font-light text-white/40">
+              <p className="text-[11px] font-light text-ink/40">
                 {data.location}
               </p>
             )}
@@ -65,7 +65,7 @@ const ExperienceCard = ({ data }: { data: IExperience }) => {
             {data.description.map((item, index) => (
               <li
                 key={index}
-                className="relative pl-6 text-sm font-light text-white/60"
+                className="relative pl-6 text-sm font-light text-ink/60"
               >
                 <span className="absolute left-0 top-2 h-1.5 w-1.5 rounded-full bg-blue-500" />
                 {item}

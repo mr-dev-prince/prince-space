@@ -32,12 +32,12 @@ const ViewCount = async () => {
 
   return (
     <span
-      className="flex items-center gap-1.5 rounded-xl border border-white/5 bg-[#0f0f0f] px-3 py-1 text-white/70"
+      className="flex items-center gap-1.5 rounded-xl border border-ink/5 bg-surface px-3 py-1 text-ink/70"
       title={`${views} page views, counted by GoatCounter`}
     >
       <FaRegEye size={13} aria-hidden />
       <span className="tabular-nums">{views}</span>
-      <span className="text-white/40">views</span>
+      <span className="text-ink/40">views</span>
     </span>
   );
 };

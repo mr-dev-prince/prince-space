@@ -65,7 +65,7 @@ const page = () => {
               icon={
                 <FaArrowRight
                   size={11}
-                  className="text-white/80 transition-transform group-hover:translate-x-0.5"
+                  className="text-ink/80 transition-transform group-hover:translate-x-0.5"
                 />
               }
             />

@@ -9,6 +9,7 @@ import {
   playChime,
   playKey,
   playMouse,
+  onAmbientChange,
   playScrollTick,
   startAmbient,
   stopAmbient,
@@ -28,9 +29,9 @@ const stroke = {
 };
 
 const keyClass =
-  "fill-transparent transition-[fill] duration-150 hover:fill-white/30";
+  "fill-transparent transition-[fill] duration-150 hover:fill-ink/30";
 const pressClass =
-  "fill-transparent transition-[fill] duration-100 active:fill-white/30";
+  "fill-transparent transition-[fill] duration-100 active:fill-ink/30";
 
 /** setTimeout that is cleared when the component unmounts. */
 const useTimers = () => {
@@ -119,12 +120,12 @@ const Pill = ({
       tabIndex={-1}
       onClick={onClick}
       onPointerDown={(e) => e.stopPropagation()}
-      className="rounded-xl border border-white/10 bg-[#0f0f0f] px-3 py-1 text-xs font-light text-white/80 transition-colors hover:bg-white/10"
+      className="rounded-xl border border-ink/10 bg-surface px-3 py-1 text-xs font-light text-ink/80 transition-colors hover:bg-ink/10"
     >
       {children}
     </button>
   ) : (
-    <span className="rounded-xl border border-white/10 bg-[#0f0f0f] px-3 py-1 text-xs font-light text-white/60">
+    <span className="rounded-xl border border-ink/10 bg-surface px-3 py-1 text-xs font-light text-ink/60">
       {children}
     </span>
   );
@@ -140,6 +141,10 @@ const Headphones = ({ rotate }: IArt) => {
   const offerTimer = useRef<number>(undefined);
   const leaveTimer = useRef<number>(undefined);
 
+  // Music can also be started or paused from the dock, so follow it rather
+  // than assume this doodle is the only thing driving it.
+  useEffect(() => onAmbientChange(setPlaying), []);
+
   useEffect(
     () => () => {
       window.clearTimeout(offerTimer.current);
@@ -150,17 +155,11 @@ const Headphones = ({ rotate }: IArt) => {
   );
 
   const begin = () => {
-    if (startAmbient()) {
-      setPlaying(true);
-      setLocked(false);
-    } else {
-      setLocked(true);
-    }
+    setLocked(!startAmbient());
   };
 
   const stop = () => {
     stopAmbient();
-    setPlaying(false);
     setOfferKeep(false);
   };
 
@@ -399,7 +398,7 @@ const Doodle = ({ kind, className = "", rotate = 0, float = 6 }: IDoodle) => {
   return (
     <motion.div
       aria-hidden
-      className={`absolute hidden cursor-pointer select-none text-white/25 transition-colors duration-300 hover:text-white xl:block ${className}`}
+      className={`absolute hidden cursor-pointer select-none text-ink/25 transition-colors duration-300 hover:text-ink xl:block ${className}`}
       style={{ rotate }}
       initial={reduceMotion ? false : { opacity: 0 }}
       whileInView={{ opacity: 1 }}

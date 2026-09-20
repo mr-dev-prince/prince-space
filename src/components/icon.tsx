@@ -22,7 +22,7 @@ const icons: Record<IconKey, React.ReactNode> = {
 };
 
 const Icon = ({ name }: { name: IconKey }) => (
-  <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 text-white/70">
+  <div className="w-12 h-12 rounded-xl bg-ink/5 flex items-center justify-center border border-ink/10 text-ink/70">
     {icons[name]}
   </div>
 );

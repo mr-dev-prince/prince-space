@@ -181,139 +181,96 @@ export const playChime = (
   return (notes.length - 1) * step + duration;
 };
 
-// A major pentatonic across two octaves, from A3.
-const AMBIENT_SCALE = [
-  220, 246.94, 277.18, 329.63, 369.99, 440, 493.88, 554.37,
-];
-const AMBIENT_LEVEL = 0.5;
+/**
+ * The background music is a real track rather than synthesis, so it lives on a
+ * plain <audio> element: no AudioContext to keep alive, and nothing is fetched
+ * until someone actually asks to hear it.
+ */
+const TRACK_SRC = "/music.mp3";
+const TRACK_LEVEL = 0.45;
+const FADE_STEP_MS = 40;
 
-type Ambient = {
-  token: object;
-  master: GainNode;
-  voices: OscillatorNode[];
-  timer: number;
+let track: HTMLAudioElement | null = null;
+let playing = false;
+let fadeTimer = 0;
+
+/**
+ * Set while the dock is deliberately playing music, so the headphones doodle
+ * cutting its own hover playback does not silence a track the visitor asked
+ * for. Only a forced stop, which is what the dock's pause does, gets through.
+ */
+let held = false;
+
+type AmbientListener = (playing: boolean) => void;
+const listeners = new Set<AmbientListener>();
+
+/** Subscribes to playback starting or stopping, from whichever control did it. */
+export const onAmbientChange = (listener: AmbientListener) => {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
 };
 
-let ambient: Ambient | null = null;
+const announce = () => listeners.forEach((listener) => listener(playing));
 
-const rampGain = (
-  param: AudioParam,
-  ctx: AudioContext,
-  to: number,
-  seconds: number,
-) => {
-  const now = ctx.currentTime;
-  param.cancelScheduledValues(now);
-  param.setValueAtTime(Math.max(param.value, 0.0001), now);
-  param.exponentialRampToValueAtTime(to, now + seconds);
+export const holdAmbient = (value: boolean) => {
+  held = value;
 };
 
-/** Starts (or fades back in) a slow generative pad. Returns false while audio is still locked. */
-export const startAmbient = (): boolean => {
-  const ctx = ready();
-  if (!ctx) return false;
-  if (ambient) {
-    rampGain(ambient.master.gain, ctx, AMBIENT_LEVEL, 1);
-    return true;
+const getTrack = () => {
+  if (!track) {
+    track = new Audio(TRACK_SRC);
+    track.loop = true;
+    track.preload = "none";
+    track.volume = 0;
   }
+  return track;
+};
 
-  const now = ctx.currentTime;
-  const master = ctx.createGain();
-  master.gain.setValueAtTime(0.0001, now);
-  master.gain.exponentialRampToValueAtTime(AMBIENT_LEVEL, now + 2.5);
-  master.connect(ctx.destination);
+/** Linear volume ramp, so starting mid fade-out simply turns around. */
+const fadeTo = (target: number, ms: number, done?: () => void) => {
+  const el = track;
+  if (!el) return;
+  window.clearInterval(fadeTimer);
+  const from = el.volume;
+  const startedAt = performance.now();
+  fadeTimer = window.setInterval(() => {
+    const progress =
+      ms <= 0 ? 1 : Math.min(1, (performance.now() - startedAt) / ms);
+    el.volume = Math.min(1, Math.max(0, from + (target - from) * progress));
+    if (progress === 1) {
+      window.clearInterval(fadeTimer);
+      done?.();
+    }
+  }, FADE_STEP_MS);
+};
 
-  const filter = ctx.createBiquadFilter();
-  filter.type = "lowpass";
-  filter.frequency.value = 1500;
-  filter.Q.value = 0.4;
-  filter.connect(master);
+/** Starts (or fades back in) the track. Returns false while audio is still locked. */
+export const startAmbient = (): boolean => {
+  if (!hasGesture || typeof window === "undefined") return false;
 
-  const delay = ctx.createDelay(1);
-  delay.delayTime.value = 0.42;
-  const feedback = ctx.createGain();
-  feedback.gain.value = 0.4;
-  const wet = ctx.createGain();
-  wet.gain.value = 0.35;
-  filter.connect(delay);
-  delay.connect(feedback).connect(delay);
-  delay.connect(wet).connect(master);
+  const el = getTrack();
+  playing = true;
+  fadeTo(TRACK_LEVEL, 1200);
 
-  const voices: OscillatorNode[] = [];
-  const drone = (frequency: number, type: WaveType, gain: number) => {
-    const osc = ctx.createOscillator();
-    osc.type = type;
-    osc.frequency.value = frequency;
-    const g = ctx.createGain();
-    g.gain.value = gain;
-    osc.connect(g).connect(filter);
-    osc.start(now);
-    voices.push(osc);
-  };
-  drone(110, "sine", 0.16);
-  drone(164.81, "triangle", 0.05);
-  drone(220.6, "sine", 0.04);
+  // Playback can still be refused, in which case nothing is playing after all.
+  void Promise.resolve(el.play()).catch(() => {
+    playing = false;
+    window.clearInterval(fadeTimer);
+    announce();
+  });
 
-  const lfo = ctx.createOscillator();
-  lfo.frequency.value = 0.07;
-  const lfoDepth = ctx.createGain();
-  lfoDepth.gain.value = 400;
-  lfo.connect(lfoDepth).connect(filter.frequency);
-  lfo.start(now);
-  voices.push(lfo);
-
-  const token = {};
-  const current: Ambient = { token, master, voices, timer: 0 };
-  ambient = current;
-
-  let lastIndex = -1;
-  const playNote = () => {
-    if (ambient?.token !== token) return;
-    let index = Math.floor(Math.random() * AMBIENT_SCALE.length);
-    if (index === lastIndex) index = (index + 1) % AMBIENT_SCALE.length;
-    lastIndex = index;
-    const frequency = AMBIENT_SCALE[index];
-    const t = ctx.currentTime + 0.05;
-    const osc = ctx.createOscillator();
-    osc.type = "sine";
-    osc.frequency.value = frequency;
-    const octave = ctx.createOscillator();
-    octave.type = "triangle";
-    octave.frequency.value = frequency * 2;
-    const octaveGain = ctx.createGain();
-    octaveGain.gain.value = 0.2;
-    const env = ctx.createGain();
-    env.gain.setValueAtTime(0.0001, t);
-    env.gain.exponentialRampToValueAtTime(0.15, t + 0.6);
-    env.gain.exponentialRampToValueAtTime(0.0001, t + 3.4);
-    osc.connect(env);
-    octave.connect(octaveGain).connect(env);
-    env.connect(filter);
-    osc.start(t);
-    octave.start(t);
-    osc.stop(t + 3.5);
-    octave.stop(t + 3.5);
-    current.timer = window.setTimeout(playNote, 1500 + Math.random() * 1500);
-  };
-  playNote();
+  announce();
   return true;
 };
 
-export const stopAmbient = (fadeSeconds = 1.5) => {
-  const current = ambient;
-  if (!current) return;
-  ambient = null;
-  window.clearTimeout(current.timer);
-  const ctx = getContext();
-  if (!ctx) return;
-  rampGain(current.master.gain, ctx, 0.0001, fadeSeconds);
-  window.setTimeout(
-    () => {
-      current.voices.forEach((voice) => voice.stop());
-      current.master.disconnect();
-    },
-    (fadeSeconds + 0.2) * 1000,
-  );
+export const stopAmbient = (fadeSeconds = 1.5, force = false) => {
+  if (held && !force) return;
+  if (!playing) return;
+  playing = false;
+  announce();
+  fadeTo(0, fadeSeconds * 1000, () => track?.pause());
 };
 
-export const isAmbientPlaying = () => ambient !== null;
+export const isAmbientPlaying = () => playing;

@@ -8,6 +8,7 @@ import {
   HiOutlineDocumentText,
   HiOutlineEnvelope,
   HiOutlineHome,
+  HiOutlineMoon,
   HiOutlineSquare2Stack,
 } from "react-icons/hi2";
 import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
@@ -78,6 +79,13 @@ const general: ICommand[] = [
     keywords: "share url clipboard",
   },
   ...booking,
+  {
+    id: "theme",
+    label: "Toggle Theme",
+    icon: HiOutlineMoon,
+    shortcut: "T",
+    keywords: "dark light mode appearance colour color",
+  },
   {
     id: "email",
     label: "Send an Email",

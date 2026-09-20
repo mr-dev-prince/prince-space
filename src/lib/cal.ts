@@ -53,24 +53,31 @@ const installStub = () => {
   window.Cal = cal;
 };
 
-let configured = false;
+let initialised = false;
 
-/** Opens the Cal.com booking modal. Returns false if the embed can't run. */
-export const openBooking = (calLink: string): boolean => {
+/**
+ * Opens the Cal.com booking modal in the given theme, so the embed matches the
+ * page it opened over. Returns false if the embed can't run.
+ */
+export const openBooking = (
+  calLink: string,
+  theme: "dark" | "light" = "dark",
+): boolean => {
   if (typeof window === "undefined") return false;
   try {
     installStub();
     const cal = window.Cal;
     if (!cal) return false;
 
-    if (!configured) {
+    if (!initialised) {
       cal("init", NAMESPACE);
-      cal.ns[NAMESPACE]("ui", { theme: "dark" });
-      configured = true;
+      initialised = true;
     }
+    // Re-sent every open, which is how a theme switch between bookings lands.
+    cal.ns[NAMESPACE]("ui", { theme });
     cal.ns[NAMESPACE]("modal", {
       calLink,
-      config: { layout: "month_view", theme: "dark" },
+      config: { layout: "month_view", theme },
     });
     return true;
   } catch {

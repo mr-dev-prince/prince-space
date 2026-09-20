@@ -16,7 +16,7 @@ const LinkPill = ({ label, href, kind = "external" }: ILink) => (
     target="_blank"
     rel="noreferrer"
     onClick={(e) => e.stopPropagation()}
-    className="flex items-center gap-1.5 px-3 py-1 rounded-xl border border-white/5 bg-[#0f0f0f] hover:bg-white/10 transition-colors text-white/70 text-xs font-light"
+    className="flex items-center gap-1.5 px-3 py-1 rounded-xl border border-ink/5 bg-surface hover:bg-ink/10 transition-colors text-ink/70 text-xs font-light"
   >
     {icons[kind]}
     <span>{label}</span>

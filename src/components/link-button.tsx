@@ -9,7 +9,7 @@ const LinkButton = ({
 }: ILinkButton) => (
   <Link
     href={href}
-    className="flex group items-center gap-2 px-4 py-2 rounded-xl border border-white/10 bg-[#0f0f0f] hover:bg-white/10 transition-colors text-white text-sm font-medium"
+    className="flex group items-center gap-2 px-4 py-2 rounded-xl border border-ink/10 bg-surface hover:bg-ink/10 transition-colors text-ink text-sm font-medium"
   >
     {iconPosition === "left" && icon}
     {text}

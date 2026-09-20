@@ -13,7 +13,7 @@ const FeaturedProjectCard = ({ data }: { data: IProject }) => {
         target="_blank"
         rel="noreferrer"
         aria-label={`Open ${data.name}`}
-        className="block overflow-hidden rounded-xl border border-white/10 bg-[#0f0f0f]"
+        className="block overflow-hidden rounded-xl border border-ink/10 bg-surface"
       >
         {data.image && (
           <Image
@@ -27,7 +27,7 @@ const FeaturedProjectCard = ({ data }: { data: IProject }) => {
       </a>
       <div className="flex min-w-0 flex-col gap-1">
         <div className="flex items-center justify-between gap-3">
-          <h3 className="truncate text-base font-medium text-white">
+          <h3 className="truncate text-base font-medium text-ink">
             {data.name}
           </h3>
           <div className="flex shrink-0 items-center gap-2">
@@ -37,7 +37,7 @@ const FeaturedProjectCard = ({ data }: { data: IProject }) => {
           </div>
         </div>
         <p
-          className="truncate text-xs font-light text-white/60"
+          className="truncate text-xs font-light text-ink/60"
           title={data.tagline}
         >
           {data.tagline}

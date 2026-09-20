@@ -21,11 +21,11 @@ const MONTHS = [
 ];
 
 const LEVEL_STYLES: Record<IContributionDay["level"], string> = {
-  0: "bg-[#161b22]",
-  1: "bg-[#0e4429]",
-  2: "bg-[#006d32]",
-  3: "bg-[#26a641]",
-  4: "bg-[#39d353]",
+  0: "bg-[var(--gh-0)]",
+  1: "bg-[var(--gh-1)]",
+  2: "bg-[var(--gh-2)]",
+  3: "bg-[var(--gh-3)]",
+  4: "bg-[var(--gh-4)]",
 };
 
 type Cell = IContributionDay | null;
@@ -100,7 +100,7 @@ const Graph = ({
           <span
             key={`${label.text}-${label.col}`}
             style={{ gridColumnStart: label.col + 1 }}
-            className="whitespace-nowrap text-xs font-light text-white/50 md:text-sm"
+            className="whitespace-nowrap text-xs font-light text-ink/50 md:text-sm"
           >
             {label.text}
           </span>
@@ -125,7 +125,7 @@ const Graph = ({
           ),
         )}
       </div>
-      <p className="mt-3 text-right text-[11px] font-light text-white/40 sm:text-xs">
+      <p className="mt-3 text-right text-[11px] font-light text-ink/40 sm:text-xs">
         {shownTotal} contributions in the last {monthsShown} months · {total}{" "}
         in the last year
       </p>
@@ -138,13 +138,13 @@ const GithubActivity = async () => {
 
   if (!days.length) {
     return (
-      <div className="rounded-2xl border border-white/10 bg-[#0a0a0a] p-4 text-sm font-light text-white/50">
+      <div className="rounded-2xl border border-ink/10 bg-surface p-4 text-sm font-light text-ink/50">
         Couldn&apos;t load contributions right now. See them on{" "}
         <a
           href={Links.github}
           target="_blank"
           rel="noreferrer"
-          className="text-white/80 underline underline-offset-4"
+          className="text-ink/80 underline underline-offset-4"
         >
           GitHub
         </a>
@@ -154,7 +154,7 @@ const GithubActivity = async () => {
   }
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#0a0a0a] p-3 md:p-4">
+    <div className="rounded-2xl border border-ink/10 bg-surface p-3 md:p-4">
       <div className="md:hidden">
         <Graph days={days} maxWeeks={WEEKS_MOBILE} total={total} />
       </div>

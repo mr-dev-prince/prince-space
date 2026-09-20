@@ -26,13 +26,13 @@ const ProjectCard = ({ data }: { data: IProject }) => {
             toggle();
           }
         }}
-        className="flex cursor-pointer items-center justify-between gap-3 rounded-lg outline-none focus-visible:ring-1 focus-visible:ring-white/30 sm:gap-4"
+        className="flex cursor-pointer items-center justify-between gap-3 rounded-lg outline-none focus-visible:ring-1 focus-visible:ring-ink/30 sm:gap-4"
       >
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
           <Icon name={data.icon} />
           <div className="flex min-w-0 flex-col">
-            <h3 className="text-base font-medium text-white">{data.name}</h3>
-            <p className="text-xs font-light text-white/60">{data.tagline}</p>
+            <h3 className="text-base font-medium text-ink">{data.name}</h3>
+            <p className="text-xs font-light text-ink/60">{data.tagline}</p>
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-3 sm:gap-5">
@@ -53,7 +53,7 @@ const ProjectCard = ({ data }: { data: IProject }) => {
             {data.stack.map((tech) => (
               <span
                 key={tech}
-                className="rounded-lg border border-white/10 bg-white/5 px-2.5 py-0.5 text-xs font-light text-white/60"
+                className="rounded-lg border border-ink/10 bg-ink/5 px-2.5 py-0.5 text-xs font-light text-ink/60"
               >
                 {tech}
               </span>
@@ -63,7 +63,7 @@ const ProjectCard = ({ data }: { data: IProject }) => {
             {data.description.map((item, index) => (
               <li
                 key={index}
-                className="relative pl-6 text-sm font-light text-white/60"
+                className="relative pl-6 text-sm font-light text-ink/60"
               >
                 <span className="absolute left-0 top-2 h-1.5 w-1.5 rounded-full bg-blue-500" />
                 {item}

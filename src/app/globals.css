@@ -2,6 +2,55 @@
 @tailwind components;
 @tailwind utilities;
 
+/**
+ * Both themes are the same design with its foreground and background swapped,
+ * so every component can stay written as ink-over-canvas and flip for free.
+ * Dark is the default, which is also what the server renders before the
+ * pre-paint script in the layout has had a chance to read a stored choice.
+ */
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --ink: 255 255 255;
+  --canvas: 0 0 0;
+  --surface: 15 15 15;
+  --panel: 11 11 11;
+
+  --line: rgba(255, 255, 255, 0.35);
+  --glow: rgba(255, 255, 255, 0.8);
+  --shadow: rgba(0, 0, 0, 0.6);
+  --scrim: rgba(0, 0, 0, 0.7);
+
+  --gh-0: #161b22;
+  --gh-1: #0e4429;
+  --gh-2: #006d32;
+  --gh-3: #26a641;
+  --gh-4: #39d353;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --ink: 17 17 17;
+  --canvas: 255 255 255;
+  --surface: 245 245 245;
+  --panel: 255 255 255;
+
+  --line: rgba(0, 0, 0, 0.26);
+  --glow: rgba(0, 0, 0, 0.35);
+  --shadow: rgba(15, 15, 15, 0.16);
+  /* A modal still dims what is behind it in light mode, rather than whiting it out. */
+  --scrim: rgba(17, 17, 17, 0.42);
+
+  /* GitHub's own light ramp, so the graph still reads as a contribution graph. */
+  --gh-0: #ebedf0;
+  --gh-1: #9be9a8;
+  --gh-2: #40c463;
+  --gh-3: #30a14e;
+  --gh-4: #216e39;
+}
+
 html,
 body {
   overflow-x: hidden;
@@ -9,7 +58,7 @@ body {
 }
 
 body {
-  background-color: #000000;
+  background-color: rgb(var(--canvas));
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -17,4 +66,125 @@ a,
 button,
 [role="button"] {
   touch-action: manipulation;
+}
+
+/* The dotted rules that frame every row, drawn from the theme's line colour. */
+.dot-line-x {
+  background-image: radial-gradient(circle, var(--line) 1px, transparent 1px);
+  background-size: 5px 2px;
+  background-repeat: repeat-x;
+}
+
+.dot-line-y {
+  background-image: radial-gradient(circle, var(--line) 1px, transparent 1px);
+  background-size: 2px 5px;
+  background-repeat: repeat-y;
+}
+
+/**
+ * Theme switch: light spreads out of the button, dark converges back into it.
+ *
+ * Both directions are the same set of blocks opening in turn; the difference is
+ * which snapshot sits on top. Spreading opens the incoming light layer up,
+ * while converging closes the outgoing light layer over the dark one beneath.
+ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Every block is its own mask layer, which would otherwise tile the viewport. */
+:root[data-theme-shift]::view-transition-old(root),
+:root[data-theme-shift]::view-transition-new(root) {
+  mask-repeat: no-repeat;
+}
+
+/**
+ * The incoming layer has to arrive hidden. Scripting can only reach these
+ * pseudo-elements once the transition is ready, and by then the browser has
+ * already painted a frame of the new theme at full size: the white flash.
+ */
+:root[data-theme-shift="spread"]::view-transition-new(root) {
+  mask-image: linear-gradient(#000, #000);
+  mask-size: 0 0;
+}
+
+:root[data-theme-shift="spread"]::view-transition-old(root) {
+  z-index: 1;
+}
+
+:root[data-theme-shift="spread"]::view-transition-new(root) {
+  z-index: 2;
+}
+
+:root[data-theme-shift="converge"]::view-transition-old(root) {
+  z-index: 2;
+}
+
+:root[data-theme-shift="converge"]::view-transition-new(root) {
+  z-index: 1;
+}
+
+/* Browsers without view transitions get the same circle as a painted overlay. */
+.theme-wipe {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  pointer-events: none;
+}
+
+/* Moon and sun share one box and cross-fade on the [data-theme] attribute, so
+   the correct one is painted before React has hydrated. */
+.theme-icon {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transition:
+    opacity 300ms ease,
+    transform 450ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root:not([data-theme="light"]) .theme-icon-sun,
+:root[data-theme="light"] .theme-icon-moon {
+  opacity: 0;
+}
+
+:root:not([data-theme="light"]) .theme-icon-sun {
+  transform: rotate(-70deg) scale(0.5);
+}
+
+:root[data-theme="light"] .theme-icon-moon {
+  transform: rotate(70deg) scale(0.5);
+}
+
+@keyframes equalize {
+  0%,
+  100% {
+    transform: scaleY(0.22);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.equalizer-bar {
+  transform-origin: bottom;
+  transform: scaleY(0.22);
+}
+
+.equalizer-bar[data-playing="true"] {
+  animation: equalize 1s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .equalizer-bar[data-playing="true"] {
+    animation: none;
+    transform: scaleY(0.7);
+  }
+
+  .theme-icon {
+    transition: none;
+  }
 }

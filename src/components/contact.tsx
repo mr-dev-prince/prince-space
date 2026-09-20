@@ -15,16 +15,16 @@ const Contact = () => (
       >
         <div className="flex flex-col items-start gap-4">
           <div className="flex flex-col gap-1">
-            <p className="font-serif text-3xl tracking-tight text-white sm:text-4xl">
+            <p className="font-serif text-3xl tracking-tight text-ink sm:text-4xl">
               Prince Chaurasia
             </p>
-            <p className="text-sm font-light text-white/60 sm:text-base">
+            <p className="text-sm font-light text-ink/60 sm:text-base">
               Software Engineer at{" "}
               <a
                 href={Links.playarka}
                 target="_blank"
                 rel="noreferrer"
-                className="text-white/80 underline decoration-white/30 underline-offset-4 transition-colors hover:text-white"
+                className="text-ink/80 underline decoration-ink/30 underline-offset-4 transition-colors hover:text-ink"
               >
                 Playarka
               </a>{" "}
@@ -34,7 +34,7 @@ const Contact = () => (
           {CAL_BOOKING && <BookCall calLink={CAL_BOOKING} />}
         </div>
 
-        <div className="flex items-end justify-between gap-4 text-xs font-light text-white/40">
+        <div className="flex items-end justify-between gap-4 text-xs font-light text-ink/40">
           <div className="flex items-center gap-3">
             <ViewCount />
             <span>devprince.space</span>

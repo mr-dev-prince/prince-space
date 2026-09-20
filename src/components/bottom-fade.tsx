@@ -11,7 +11,7 @@ const BottomFade = () => (
     <div {...blurLayer("backdrop-blur-[2px]", "0%", "35%")} />
     <div {...blurLayer("backdrop-blur-[6px]", "35%", "70%")} />
     <div {...blurLayer("backdrop-blur-xl", "70%", "100%")} />
-    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black" />
+    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-canvas/50 to-canvas" />
   </div>
 );
 
