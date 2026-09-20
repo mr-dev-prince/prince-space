@@ -26,11 +26,12 @@ const ViewCount = () => {
 
   return (
     <span
-      className="flex items-center gap-1.5"
+      className="flex items-center gap-1.5 text-white/70"
       title={`${views} page views, counted by GoatCounter`}
     >
-      <FaRegEye size={12} aria-hidden />
-      {views}
+      <FaRegEye size={13} aria-hidden />
+      <span className="tabular-nums">{views}</span>
+      <span className="text-white/40">views</span>
     </span>
   );
 };
