@@ -2,6 +2,8 @@ import "./globals.css";
 import { Caveat, Poppins } from "next/font/google";
 import BottomFade from "../components/bottom-fade";
 import BottomTabs from "../components/bottom-tabs";
+import Analytics from "../components/analytics";
+import CommandMenu from "../components/command-menu";
 
 const caveat = Caveat({ subsets: ["latin"], variable: "--font-caveat" });
 const poppins = Poppins({
@@ -32,6 +34,8 @@ export default function RootLayout({ children }) {
         {children}
         <BottomFade />
         <BottomTabs />
+        <Analytics />
+        <CommandMenu />
       </body>
     </html>
   );

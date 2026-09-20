@@ -18,3 +18,16 @@ export const Links = {
  * no booking button, so nothing links anywhere broken.
  */
 export const CAL_BOOKING: string = "prince-chaurasia/15min";
+
+/**
+ * GoatCounter, which is cookieless and counts server side.
+ *
+ * The counter endpoint needs "Allow adding visitor counts on your website"
+ * turned on under Settings on goatcounter.com; it defaults to off and returns
+ * 403 until then. Responses are cached there for up to four hours.
+ */
+export const GOATCOUNTER = {
+  script: "https://gc.zgo.at/count.js",
+  endpoint: "https://devprince.goatcounter.com/count",
+  counter: "https://devprince.goatcounter.com/counter/TOTAL.json",
+};

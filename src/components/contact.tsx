@@ -1,6 +1,7 @@
 import BookCall from "./book-call";
 import Reveal from "./reveal";
 import Row from "./row";
+import ViewCount from "./view-count";
 import { CAL_BOOKING, Links } from "../constants/links";
 
 const YEAR = 2026;
@@ -34,14 +35,17 @@ const Contact = () => (
         </div>
 
         <div className="flex items-end justify-between gap-4 text-xs font-light text-white/40">
-          <a
-            href={Links.github}
-            target="_blank"
-            rel="noreferrer"
-            className="transition-colors hover:text-white/70"
-          >
-            devprince.space
-          </a>
+          <div className="flex items-center gap-3">
+            <ViewCount />
+            <a
+              href={Links.github}
+              target="_blank"
+              rel="noreferrer"
+              className="transition-colors hover:text-white/70"
+            >
+              devprince.space
+            </a>
+          </div>
           <div className="flex flex-col items-end gap-0.5">
             <span>Made with ♡</span>
             <span>© {YEAR} Prince Chaurasia</span>
