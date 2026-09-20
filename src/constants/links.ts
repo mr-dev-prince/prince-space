@@ -16,4 +16,4 @@ export const Links = {
  * While this is empty the Contact section simply shows the email button and
  * no booking button, so nothing links anywhere broken.
  */
-export const CAL_BOOKING: string = "";
+export const CAL_BOOKING: string = "prince-chaurasia/15min";
