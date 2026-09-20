@@ -37,14 +37,7 @@ const Contact = () => (
         <div className="flex items-end justify-between gap-4 text-xs font-light text-white/40">
           <div className="flex items-center gap-3">
             <ViewCount />
-            <a
-              href={Links.github}
-              target="_blank"
-              rel="noreferrer"
-              className="transition-colors hover:text-white/70"
-            >
-              devprince.space
-            </a>
+            <span>devprince.space</span>
           </div>
           <div className="flex flex-col items-end gap-0.5">
             <span>Made with ♡</span>
