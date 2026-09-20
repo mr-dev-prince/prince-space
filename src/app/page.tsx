@@ -8,6 +8,7 @@ import Doodle from "../components/doodle";
 import FeaturedProjectCard from "../components/featured-project";
 import LinkButton from "../components/link-button";
 import GithubActivity from "../components/github-activity";
+import Contact from "../components/contact";
 import { ExperienceRows, SkillRows } from "../components/sections";
 import { FaArrowRight } from "react-icons/fa";
 import { FeaturedProjects } from "../constants/projects";
@@ -95,6 +96,10 @@ const page = () => {
           rotate={-6}
         />
       </div>
+
+      <Heading text="Contact" />
+      <Contact />
+      <HorizontalLines />
     </Frame>
   );
 };

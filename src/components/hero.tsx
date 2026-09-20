@@ -96,7 +96,9 @@ const Hero = () => {
           text="Let's Talk! "
           icon={<FaCog className="text-white/80 group-hover:animate-spin" />}
           onClick={() => {
-            window.location.href = Links.email;
+            document
+              .getElementById("contact")
+              ?.scrollIntoView({ behavior: "smooth", block: "center" });
           }}
         />
       </div>
