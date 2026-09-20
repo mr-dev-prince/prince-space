@@ -1,26 +1,51 @@
-import { FaEnvelope } from "react-icons/fa";
 import BookCall from "./book-call";
 import Reveal from "./reveal";
 import Row from "./row";
 import { CAL_BOOKING, Links } from "../constants/links";
 
+const YEAR = 2026;
+
 const Contact = () => (
   <Row>
     <Reveal>
-      <div id="contact" className="flex flex-col gap-4 scroll-mt-24">
-        <p className="max-w-xl text-sm font-light leading-relaxed text-white/60 sm:text-base">
-          Building something, hiring, or just want to talk shop? Grab fifteen
-          minutes on my calendar, or send me an email and I&apos;ll reply.
-        </p>
-        <div className="flex flex-wrap items-center gap-3">
+      <div
+        id="contact"
+        className="flex scroll-mt-24 flex-col justify-between gap-16 py-6 sm:min-h-[260px]"
+      >
+        <div className="flex flex-col items-start gap-4">
+          <div className="flex flex-col gap-1">
+            <p className="font-serif text-3xl tracking-tight text-white sm:text-4xl">
+              Prince Chaurasia
+            </p>
+            <p className="text-sm font-light text-white/60 sm:text-base">
+              Software Engineer at{" "}
+              <a
+                href={Links.playarka}
+                target="_blank"
+                rel="noreferrer"
+                className="text-white/80 underline decoration-white/30 underline-offset-4 transition-colors hover:text-white"
+              >
+                Playarka
+              </a>{" "}
+              &amp; building cool things ✦
+            </p>
+          </div>
           {CAL_BOOKING && <BookCall calLink={CAL_BOOKING} />}
+        </div>
+
+        <div className="flex items-end justify-between gap-4 text-xs font-light text-white/40">
           <a
-            href={Links.email}
-            className="flex items-center gap-2 rounded-xl border border-white/10 bg-[#0f0f0f] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
+            href={Links.github}
+            target="_blank"
+            rel="noreferrer"
+            className="transition-colors hover:text-white/70"
           >
-            <FaEnvelope size={13} className="text-white/80" />
-            Email me
+            devprince.space
           </a>
+          <div className="flex flex-col items-end gap-0.5">
+            <span>Made with ♡</span>
+            <span>© {YEAR} Prince Chaurasia</span>
+          </div>
         </div>
       </div>
     </Reveal>

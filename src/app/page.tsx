@@ -97,7 +97,6 @@ const page = () => {
         />
       </div>
 
-      <Heading text="Contact" />
       <Contact />
       <HorizontalLines />
     </Frame>

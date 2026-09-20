@@ -5,6 +5,7 @@ export const Links = {
   leetcode: "https://leetcode.com/u/dev_prince/",
   email: "mailto:pkcofficial24@gmail.com",
   resume: "/resume.pdf",
+  playarka: "https://playarka.com",
 };
 
 /**
