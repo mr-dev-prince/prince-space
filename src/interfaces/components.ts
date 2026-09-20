@@ -96,6 +96,25 @@ interface ITab {
   activeIcon: IconType;
 }
 
+interface ICommand {
+  id: string;
+  label: string;
+  icon: IconType;
+  /** Letter shown as "shift + <letter>" and bound while the menu is open. */
+  shortcut?: string;
+  /** Extra words the search matches on, beyond the label. */
+  keywords?: string;
+  /** Element id to scroll to when that section is on screen. */
+  anchor?: string;
+  href?: string;
+  external?: boolean;
+}
+
+interface ICommandGroup {
+  heading: string;
+  items: ICommand[];
+}
+
 interface IButton {
   text: string;
   icon: React.ReactNode;
@@ -124,6 +143,8 @@ export type {
   IHeading,
   IPageHeader,
   ITab,
+  ICommand,
+  ICommandGroup,
   IButton,
   ISocialButton,
 };

@@ -6,6 +6,7 @@ import prince from "../assets/prince.png";
 import Button from "./button";
 import { ISocialButton } from "../interfaces/components";
 import { Links } from "../constants/links";
+import { openCommandMenu } from "../lib/command-menu";
 
 import {
   FaGithub,
@@ -68,8 +69,10 @@ const Hero = () => {
         </div>
         <button
           type="button"
-          aria-label="Command menu"
-          className="hidden items-center gap-2 rounded-lg border border-white/10 bg-black/40 px-5 py-1.5 text-xs font-medium text-white/40 transition-colors hover:bg-white/5 md:flex"
+          aria-label="Open navigation menu"
+          aria-keyshortcuts="Meta+K Control+K"
+          onClick={openCommandMenu}
+          className="hidden items-center gap-2 rounded-lg border border-white/10 bg-black/40 px-5 py-1.5 text-xs font-medium text-white/40 transition-colors hover:bg-white/5 hover:text-white/70 md:flex"
         >
           <span>⌘</span>
           <span>K</span>

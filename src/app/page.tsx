@@ -32,7 +32,10 @@ const page = () => {
       <HorizontalLines />
 
       {/* On phones this lives under the Experience tab. */}
-      <section className="relative hidden md:block">
+      <section
+        id="experience"
+        className="relative hidden scroll-mt-16 md:block"
+      >
         <Heading text="Experience" />
         <ExperienceRows />
         <HorizontalLines />
@@ -43,34 +46,36 @@ const page = () => {
         />
       </section>
 
-      <Heading text="Projects" />
-      <Row>
-        <div className="grid gap-8 py-2 sm:grid-cols-2 sm:gap-6">
-          {FeaturedProjects.map((item, index) => (
-            <Reveal key={item.name} delay={index * 0.08}>
-              <FeaturedProjectCard data={item} />
-            </Reveal>
-          ))}
-        </div>
-      </Row>
-      <Row>
-        <Reveal className="flex justify-center">
-          <LinkButton
-            href="/projects"
-            text="More"
-            icon={
-              <FaArrowRight
-                size={11}
-                className="text-white/80 transition-transform group-hover:translate-x-0.5"
-              />
-            }
-          />
-        </Reveal>
-      </Row>
-      <HorizontalLines />
+      <section id="projects" className="relative scroll-mt-16">
+        <Heading text="Projects" />
+        <Row>
+          <div className="grid gap-8 py-2 sm:grid-cols-2 sm:gap-6">
+            {FeaturedProjects.map((item, index) => (
+              <Reveal key={item.name} delay={index * 0.08}>
+                <FeaturedProjectCard data={item} />
+              </Reveal>
+            ))}
+          </div>
+        </Row>
+        <Row>
+          <Reveal className="flex justify-center">
+            <LinkButton
+              href="/projects"
+              text="More"
+              icon={
+                <FaArrowRight
+                  size={11}
+                  className="text-white/80 transition-transform group-hover:translate-x-0.5"
+                />
+              }
+            />
+          </Reveal>
+        </Row>
+        <HorizontalLines />
+      </section>
 
       {/* On phones this lives under the Skills tab. */}
-      <section className="relative hidden md:block">
+      <section id="skills" className="relative hidden scroll-mt-16 md:block">
         <Heading text="Skills" />
         <SkillRows />
         <HorizontalLines />
@@ -82,7 +87,7 @@ const page = () => {
         />
       </section>
 
-      <div className="relative">
+      <div id="github" className="relative scroll-mt-16">
         <Heading text="GitHub Activity" />
         <Row>
           <Reveal>
