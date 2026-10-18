@@ -6,6 +6,7 @@ import {
   FaMicrochip,
   FaMobileAlt,
   FaNetworkWired,
+  FaVideo,
   FaWallet,
 } from "react-icons/fa";
 import { IconKey } from "../interfaces/components";
@@ -19,6 +20,7 @@ const icons: Record<IconKey, React.ReactNode> = {
   landmark: <FaLandmark size={18} />,
   leaf: <FaLeaf size={18} />,
   network: <FaNetworkWired size={18} />,
+  video: <FaVideo size={18} />,
 };
 
 const Icon = ({ name }: { name: IconKey }) => (

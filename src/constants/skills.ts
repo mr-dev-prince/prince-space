@@ -30,6 +30,7 @@ import {
   SiThreedotjs,
   SiTypescript,
   SiVercel,
+  SiWebrtc,
 } from "react-icons/si";
 
 export const Skills: ISkill[] = [
@@ -43,6 +44,7 @@ export const Skills: ISkill[] = [
   { name: "Node.js", icon: SiNodedotjs, color: "#5FA04E" },
   { name: "Express", icon: SiExpress },
   { name: "FastAPI", icon: SiFastapi, color: "#009688" },
+  { name: "WebRTC", icon: SiWebrtc },
   { name: "React Native (Expo)", icon: SiExpo },
   { name: "Redux", icon: SiRedux, color: "#764ABC" },
   { name: "Tailwind CSS", icon: SiTailwindcss, color: "#06B6D4" },

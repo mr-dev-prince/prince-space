@@ -9,7 +9,8 @@ type IconKey =
   | "mobile"
   | "landmark"
   | "leaf"
-  | "network";
+  | "network"
+  | "video";
 
 type LinkKind = "github" | "live" | "server" | "external";
 

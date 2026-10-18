@@ -3,8 +3,41 @@ import journio from "../assets/projects/journio.jpg";
 import splito from "../assets/projects/splito.jpg";
 import learnbit from "../assets/projects/learnbit.jpg";
 import indicRoots from "../assets/projects/indic-roots.jpg";
+import vidbase from "../assets/projects/vidbase.jpg";
 
 export const Projects: IProject[] = [
+  {
+    name: "vidbase",
+    featured: true,
+    image: vidbase,
+    tagline: "Calls, streams & zero boredom",
+    icon: "video",
+    stack: [
+      "TypeScript",
+      "Next.js",
+      "WebRTC",
+      "Socket.io",
+      "Cloudflare Realtime",
+      "Zustand",
+      "Bun",
+      "Turborepo",
+      "Tailwind CSS",
+    ],
+    links: [
+      {
+        label: "GitHub",
+        href: "https://github.com/mr-dev-prince/vidbase",
+        kind: "github",
+      },
+      { label: "Live", href: "https://vidbase.devprince.space", kind: "live" },
+    ],
+    description: [
+      "Open-source video calling and live streaming app: rooms of up to 5 people talk peer-to-peer over a WebRTC mesh, so call media never touches a server.",
+      "Live streams reach up to 100 viewers through Cloudflare's Realtime SFU, with a usage meter that pauses streaming before it leaves the free tier.",
+      "Bun-powered Socket.io signaling server running on a Raspberry Pi behind a Cloudflare Tunnel, with token-bucket rate limits and validation of every client message.",
+      "In-call chat, emoji reactions, raised hands, and active-speaker detection, with socket event types shared between client and server in a Turborepo monorepo.",
+    ],
+  },
   {
     name: "Journio",
     featured: true,
@@ -157,7 +190,6 @@ export const Projects: IProject[] = [
   },
   {
     name: "Indic Roots",
-    featured: true,
     image: indicRoots,
     tagline: "The Indian heritage and culture platform",
     icon: "landmark",
