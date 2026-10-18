@@ -3,6 +3,7 @@ import { Caveat, Poppins } from "next/font/google";
 import BottomFade from "../components/bottom-fade";
 import BottomTabs from "../components/bottom-tabs";
 import Analytics from "../components/analytics";
+import AnimatedFavicon from "../components/animated-favicon";
 import CommandMenu from "../components/command-menu";
 import Dock from "../components/dock";
 import ThemeProvider from "../components/theme-provider";
@@ -16,8 +17,14 @@ const poppins = Poppins({
 });
 
 export const metadata = {
-  title: "Prince Chaurasia",
+  title: "Prince Chaurasia - Software Engineer",
   description: "The Developer's Space",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "48x48" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+  },
 };
 
 export const viewport = {
@@ -46,6 +53,7 @@ export default function RootLayout({ children }) {
           <BottomTabs />
           <Dock />
           <Analytics />
+          <AnimatedFavicon />
           <CommandMenu />
         </ThemeProvider>
       </body>

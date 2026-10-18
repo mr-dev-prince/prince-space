@@ -78,20 +78,22 @@ const Hero = () => {
           <span>K</span>
         </button>
       </div>
-      <div className="max-w-2xl space-y-2 text-[15px] font-light leading-relaxed text-ink/60 sm:text-base">
+      <div className="max-w-2xl space-y-4 text-[15px] font-light leading-loose tracking-wide text-ink/60 [word-spacing:0.08em] sm:text-base sm:leading-loose">
         <p>
           i am a <Underlined>computer science graduate</Underlined> currently
           working as a <Underlined>software engineer</Underlined> and building
           cool things.
         </p>
-        <p className="leading-loose">
-          i use <span className="text-ink">react</span> to build frontends,{" "}
-          <span className="text-ink">fastify</span> and{" "}
-          <span className="text-ink">fastAPI</span> for backends,{" "}
-          <span className="text-ink">Next.js</span> to create complete
-          full-stack web apps, and by using modern databases like{" "}
-          <span className="text-ink">PostgreSQL</span> and{" "}
-          <span className="text-ink">MongoDB</span>.
+        <p>
+          i build across the stack:{" "}
+          <span className="text-ink">frontends</span>,{" "}
+          <span className="text-ink">backends</span>,{" "}
+          <span className="text-ink">real-time systems</span>,{" "}
+          <span className="text-ink">mobile apps</span> and even{" "}
+          <span className="text-ink">firmware</span>. i&apos;m not tied to one
+          framework. i pick whatever fits the problem, and with{" "}
+          <span className="text-ink">AI</span> in my workflow, getting
+          productive in a new language or stack is quick.
         </p>
       </div>
       <div className="mt-4">
