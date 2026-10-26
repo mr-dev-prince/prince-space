@@ -1,6 +1,7 @@
 import { ICommand, ICommandGroup } from "../interfaces/components";
 import { CAL_BOOKING, Links } from "./links";
 import {
+  HiOutlineAcademicCap,
   HiOutlineBookOpen,
   HiOutlineBriefcase,
   HiOutlineCalendarDays,
@@ -46,6 +47,14 @@ const sections: ICommand[] = [
     keywords: "work built apps side projects",
     anchor: "projects",
     href: "/projects",
+  },
+  {
+    id: "learning",
+    label: "Learning",
+    icon: HiOutlineAcademicCap,
+    shortcut: "L",
+    keywords: "studying hld system design high level design topics",
+    href: "/learning",
   },
   {
     id: "github",

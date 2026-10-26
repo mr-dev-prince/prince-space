@@ -178,7 +178,53 @@ button,
   animation: equalize 1s ease-in-out infinite;
 }
 
+/* Dotted diagram edges march from one box to the next, so the flow reads at a glance. */
+@keyframes diagram-flow {
+  to {
+    stroke-dashoffset: -9;
+  }
+}
+
+.diagram-flow {
+  stroke-dasharray: 0.01 9;
+  animation: diagram-flow 0.6s linear infinite;
+}
+
+.diagram-dot {
+  filter: drop-shadow(0 0 6px currentColor);
+}
+
+/* The faint dot grid a slide is drawn on. */
+.slide-grid {
+  background-color: rgb(var(--canvas));
+  background-image: radial-gradient(rgb(var(--ink) / 0.07) 1px, transparent 1px);
+  background-size: 28px 28px;
+  background-position: 14px 14px;
+}
+
+@keyframes spectrum-travel {
+  from {
+    left: 0%;
+  }
+  to {
+    left: 100%;
+  }
+}
+
+.spectrum-dot {
+  animation: spectrum-travel 3.2s ease-in-out infinite alternate;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .diagram-flow,
+  .spectrum-dot {
+    animation: none;
+  }
+
+  .spectrum-dot {
+    left: 75%;
+  }
+
   .equalizer-bar[data-playing="true"] {
     animation: none;
     transform: scaleY(0.7);

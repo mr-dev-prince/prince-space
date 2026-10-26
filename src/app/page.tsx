@@ -11,6 +11,7 @@ import GithubActivity from "../components/github-activity";
 import Contact from "../components/contact";
 import { ExperienceRows, SkillRows } from "../components/sections";
 import { FaArrowRight } from "react-icons/fa";
+import { HiOutlineAcademicCap } from "react-icons/hi2";
 import { FeaturedProjects } from "../constants/projects";
 
 const page = () => {
@@ -58,7 +59,7 @@ const page = () => {
           </div>
         </Row>
         <Row>
-          <Reveal className="flex justify-center">
+          <Reveal className="flex flex-wrap justify-center gap-3">
             <LinkButton
               href="/projects"
               text="More"
@@ -68,6 +69,12 @@ const page = () => {
                   className="text-ink/80 transition-transform group-hover:translate-x-0.5"
                 />
               }
+            />
+            <LinkButton
+              href="/learning"
+              text="What I'm learning"
+              iconPosition="left"
+              icon={<HiOutlineAcademicCap size={15} className="text-ink/80" />}
             />
           </Reveal>
         </Row>
