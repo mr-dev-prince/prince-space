@@ -1,0 +1,19 @@
+import { ILearningTrack } from "../../../interfaces/components";
+import { Commencement } from "./01-commencement";
+import { WhatIsSystemDesign } from "./02-what-is-system-design";
+import { HowToApproachSystemDesign } from "./03-how-to-approach-system-design";
+import { SignsOfAGoodSystem } from "./04-signs-of-a-good-system";
+import { RelationalDatabases } from "./05-relational-databases";
+
+export const HldTrack: ILearningTrack = {
+  id: "hld",
+  label: "HLD",
+  title: "High-Level Design",
+  topics: [
+    Commencement,
+    WhatIsSystemDesign,
+    HowToApproachSystemDesign,
+    SignsOfAGoodSystem,
+    RelationalDatabases,
+  ],
+};
