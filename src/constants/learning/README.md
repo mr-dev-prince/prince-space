@@ -6,20 +6,20 @@ Follow it end to end. The last section is the checklist.
 
 ## Where things live
 
-| What                                  | Where                                                                             |
-| ------------------------------------- | --------------------------------------------------------------------------------- |
-| Source notes (markdown)               | `../lld-java/docs/<track>/NN-slug.md` in the `lld-java` repo next to this one     |
-| Slide data, one file per topic        | `src/constants/learning/<track>/NN-slug.ts`                                       |
-| Track index (topic order)             | `src/constants/learning/<track>/index.ts`                                         |
-| Root index (track order)              | `src/constants/learning/index.ts`                                                 |
-| Types for topics, slides, blocks      | `src/interfaces/components.ts`: `ILearningTopic` and everything `SlideBlock` uses |
-| Slide renderer / diagram renderer     | `src/components/learning.tsx` / `src/components/diagrams.tsx`                     |
-| Complete, recent example to copy from | `src/constants/learning/hld/04-signs-of-a-good-system.ts`                         |
+| What                                  | Where                                                                                   |
+| ------------------------------------- | --------------------------------------------------------------------------------------- |
+| Source notes (markdown)               | `../system-design/docs/<track>/NN-slug.md` in the `system-design` repo next to this one |
+| Slide data, one file per topic        | `src/constants/learning/<track>/NN-slug.ts`                                             |
+| Track index (topic order)             | `src/constants/learning/<track>/index.ts`                                               |
+| Root index (track order)              | `src/constants/learning/index.ts`                                                       |
+| Types for topics, slides, blocks      | `src/interfaces/components.ts`: `ILearningTopic` and everything `SlideBlock` uses       |
+| Slide renderer / diagram renderer     | `src/components/learning.tsx` / `src/components/diagrams.tsx`                           |
+| Complete, recent example to copy from | `src/constants/learning/hld/04-signs-of-a-good-system.ts`                               |
 
 Tracks: `hld` (High-Level Design) exists. LLD notes live in
-`../lld-java/docs/lld` and have no track yet; see "New track" below.
+`../system-design/docs/lld` and have no track yet; see "New track" below.
 
-## 1. Format the notes first (in lld-java)
+## 1. Format the notes first (in system-design)
 
 Slides are mapped from the structure of the notes file, so make it look like
 its siblings before anything else:
@@ -135,9 +135,11 @@ Before using an icon not already in the codebase, confirm it exists:
 
 ## 5. Register it
 
-Add the import and the export to the `topics` array in
-`src/constants/learning/<track>/index.ts`, in reading order (the number in
-the filename).
+Notes arrive in series, so a new topic always goes after the last one.
+Add its import and append its export to the end of the `topics` array in
+`src/constants/learning/<track>/index.ts`. The array order must match the
+numbers in the filenames, so a new notes file takes the next free number
+and nothing is inserted in the middle.
 
 New track: create `src/constants/learning/<track>/index.ts` exporting
 `<Track>Track: ILearningTrack` with `id`, `label` (short, like "LLD"),
@@ -165,5 +167,5 @@ unless asked.
 - [ ] Text copied verbatim; typo fixes reported
 - [ ] Every diagram's nodes fit inside its width and height; one glow per slide
 - [ ] Only used icons imported, alphabetical, present in `react-icons/lu`
-- [ ] Registered in the track index in order
+- [ ] Appended to the end of the track index; array order matches filename numbers
 - [ ] prettier and tsc clean, `tsconfig.tsbuildinfo` restored

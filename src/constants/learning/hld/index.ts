@@ -4,6 +4,7 @@ import { WhatIsSystemDesign } from "./02-what-is-system-design";
 import { HowToApproachSystemDesign } from "./03-how-to-approach-system-design";
 import { SignsOfAGoodSystem } from "./04-signs-of-a-good-system";
 import { RelationalDatabases } from "./05-relational-databases";
+import { IsolationLevels } from "./06-isolation-levels";
 
 export const HldTrack: ILearningTrack = {
   id: "hld",
@@ -15,5 +16,6 @@ export const HldTrack: ILearningTrack = {
     HowToApproachSystemDesign,
     SignsOfAGoodSystem,
     RelationalDatabases,
+    IsolationLevels,
   ],
 };
