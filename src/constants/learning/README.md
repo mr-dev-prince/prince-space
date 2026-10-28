@@ -32,9 +32,10 @@ its siblings before anything else:
 - A `mermaid` code block after each idea that benefits from a picture
   (`flowchart`, `sequenceDiagram`, `erDiagram`). A markdown table for
   comparisons.
-- Keep the author's words. Fix obvious typos and duplicated words only, and
-  list every such change in your final message. Do not add facts, examples or
-  explanations that are not in the notes.
+- Keep the author's meaning and structure, but reword, tighten or expand an
+  explanation when that makes it clearer and easier to follow, and fix typos.
+  List every wording change and every added explanation in your final
+  message so the author can check it.
 - Use `→` instead of `->` in prose.
 
 ## 2. Create the topic file
