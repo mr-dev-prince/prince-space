@@ -6,6 +6,7 @@ import { SignsOfAGoodSystem } from "./04-signs-of-a-good-system";
 import { RelationalDatabases } from "./05-relational-databases";
 import { IsolationLevels } from "./06-isolation-levels";
 import { ScalingDatabases } from "./07-scaling-databases";
+import { ShardingAndPartitioning } from "./08-sharding-and-partitioning";
 
 export const HldTrack: ILearningTrack = {
   id: "hld",
@@ -19,5 +20,6 @@ export const HldTrack: ILearningTrack = {
     RelationalDatabases,
     IsolationLevels,
     ScalingDatabases,
+    ShardingAndPartitioning,
   ],
 };
