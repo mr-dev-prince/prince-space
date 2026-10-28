@@ -7,6 +7,7 @@ import { RelationalDatabases } from "./05-relational-databases";
 import { IsolationLevels } from "./06-isolation-levels";
 import { ScalingDatabases } from "./07-scaling-databases";
 import { ShardingAndPartitioning } from "./08-sharding-and-partitioning";
+import { NonRelationalDatabases } from "./09-non-relational-databases";
 
 export const HldTrack: ILearningTrack = {
   id: "hld",
@@ -21,5 +22,6 @@ export const HldTrack: ILearningTrack = {
     IsolationLevels,
     ScalingDatabases,
     ShardingAndPartitioning,
+    NonRelationalDatabases,
   ],
 };
