@@ -9,6 +9,7 @@ import { ScalingDatabases } from "./07-scaling-databases";
 import { ShardingAndPartitioning } from "./08-sharding-and-partitioning";
 import { NonRelationalDatabases } from "./09-non-relational-databases";
 import { PickingTheRightDatabase } from "./10-picking-the-right-database";
+import { Caching } from "./11-caching";
 
 export const HldTrack: ILearningTrack = {
   id: "hld",
@@ -25,5 +26,6 @@ export const HldTrack: ILearningTrack = {
     ShardingAndPartitioning,
     NonRelationalDatabases,
     PickingTheRightDatabase,
+    Caching,
   ],
 };
