@@ -1,0 +1,556 @@
+import { ILearningTopic } from "../../../interfaces/components";
+import {
+  LuCalendarClock,
+  LuChevronsUp,
+  LuCircleCheck,
+  LuCopy,
+  LuDatabase,
+  LuHourglass,
+  LuSave,
+  LuSend,
+  LuServer,
+  LuSplit,
+  LuTrophy,
+  LuUser,
+  LuUsers,
+  LuZap,
+} from "react-icons/lu";
+
+export const PopulatingTheCacheAndScaling: ILearningTopic = {
+  id: "populating-the-cache-and-scaling",
+  title: "Populating & scaling the cache",
+  summary:
+    "Cache hit and miss, lazy and eager population, and scaling the cache like a database",
+  slides: [
+    {
+      title: "Populating the cache and scaling it",
+      blocks: [
+        {
+          type: "list",
+          items: [
+            "A cache is commonly placed between the **API server** and the **database**.",
+            {
+              text: "When a user makes a request, the cache is checked first for the requested data.",
+              items: [
+                "**Cache hit** - the data is found in the cache and is returned to the user.",
+                {
+                  text: "**Cache miss** - the data is not in the cache, so the request is forwarded to the database.",
+                  items: [
+                    "The database retrieves the data and returns it to the API server.",
+                    "The API server stores the retrieved data in the cache for future requests.",
+                    "The data is returned to the user.",
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "note",
+          text: "Whenever we set something in the cache, we set an expiry.",
+        },
+        {
+          type: "flow",
+          width: 900,
+          height: 340,
+          nodes: [
+            {
+              id: "user",
+              label: "User",
+              icon: LuUser,
+              x: 50,
+              y: 110,
+              w: 72,
+              kind: "circle",
+            },
+            {
+              id: "api",
+              label: "API server",
+              icon: LuServer,
+              x: 195,
+              y: 110,
+              w: 160,
+              h: 64,
+            },
+            {
+              id: "check",
+              label: "Data in the cache?",
+              icon: LuZap,
+              x: 410,
+              y: 110,
+              w: 220,
+              h: 110,
+              kind: "diamond",
+              tone: "accent",
+              glow: true,
+            },
+            {
+              id: "hit",
+              label: "Return the data",
+              sub: "to the user",
+              icon: LuCircleCheck,
+              x: 760,
+              y: 110,
+              w: 240,
+              h: 64,
+              tone: "good",
+            },
+            {
+              id: "db",
+              label: "Database",
+              icon: LuDatabase,
+              x: 410,
+              y: 280,
+              w: 160,
+              h: 90,
+              kind: "db",
+            },
+            {
+              id: "store",
+              label: "Store it in the cache",
+              sub: "with an expiry",
+              icon: LuSave,
+              x: 760,
+              y: 280,
+              w: 240,
+              h: 64,
+            },
+          ],
+          edges: [
+            { from: "user", to: "api", pulse: true },
+            { from: "api", to: "check", pulse: true, tone: "accent" },
+            { from: "check", to: "hit", label: "cache hit", tone: "good" },
+            {
+              from: "check",
+              to: "db",
+              label: "cache miss",
+              pulse: true,
+              tone: "accent",
+            },
+            {
+              from: "db",
+              to: "store",
+              label: "retrieve the data",
+              pulse: true,
+              tone: "accent",
+            },
+            { from: "store", to: "hit", pulse: true, tone: "accent" },
+          ],
+        },
+      ],
+    },
+    {
+      title: "Two ways to populate the cache",
+      layout: "stack",
+      blocks: [
+        {
+          type: "list",
+          items: [
+            "**Lazy population** [ most popular ] - fill the cache on demand, the first time a read misses.",
+            "**Eager population** - fill the cache ahead of the read, either on every write or proactively on a schedule.",
+          ],
+        },
+        {
+          type: "cards",
+          columns: 2,
+          items: [
+            {
+              icon: LuHourglass,
+              title: "Lazy population",
+              tone: "accent",
+              meta: [
+                {
+                  label: "Cache is filled",
+                  value: "on a cache miss, after reading from the database",
+                },
+                {
+                  label: "Use it when",
+                  value: "data is expensive to fetch and read often",
+                },
+                {
+                  label: "Example",
+                  value: "a blog, cached the first time someone reads it",
+                },
+              ],
+            },
+            {
+              icon: LuSend,
+              title: "Eager population",
+              meta: [
+                {
+                  label: "Cache is filled",
+                  value:
+                    "on every write, or proactively before it is requested",
+                },
+                {
+                  label: "Use it when",
+                  value: "you know the data will be read heavily",
+                },
+                {
+                  label: "Example",
+                  value: "a cricket scorecard, the top 10 trending blogs",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      title: "1. Lazy Population [ Most Popular ]",
+      blocks: [
+        {
+          type: "list",
+          items: [
+            "Reads go to the cache first. If the data exists, return it.",
+            "If the data does not exist, go to the database, get the data, return it to the user and set it in the cache for future requests.",
+            {
+              text: "Example - caching blogs",
+              items: [
+                "Fetching a blog from the database is expensive. Hence, when someone accesses it, we fetch it from the database and cache it on Redis.",
+                "Subsequent requests are served from the cache until the cache expires.",
+              ],
+            },
+          ],
+        },
+        {
+          type: "sequence",
+          width: 620,
+          actors: [
+            { label: "API server", icon: LuServer },
+            { label: "Redis", icon: LuZap },
+            { label: "Database", icon: LuDatabase },
+          ],
+          steps: [
+            { section: "a user reads a blog - cache miss", tone: "accent" },
+            { from: 0, to: 1, label: "get the blog" },
+            { from: 1, to: 0, label: "not cached", tone: "bad" },
+            { from: 0, to: 2, label: "fetch the blog - expensive" },
+            { from: 2, to: 0, label: "the blog" },
+            {
+              from: 0,
+              to: 1,
+              label: "set the blog - with an expiry",
+              tone: "accent",
+            },
+            {
+              section:
+                "the same blog is read again - cache hit, until it expires",
+              tone: "good",
+            },
+            { from: 0, to: 1, label: "get the blog" },
+            {
+              from: 1,
+              to: 0,
+              label: "the blog - from the cache",
+              tone: "good",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      title: "2. Eager Population",
+      blocks: [
+        {
+          type: "list",
+          items: [
+            "There are two ways to populate the cache eagerly.",
+            {
+              text: "**Write to both at the same time** - write or update data in the cache and the database simultaneously (write-through).",
+              items: [
+                "Example - cricket match scorecard. Whenever a new score is updated, it is written to the database and also updated in the cache.",
+                "In this case you know that thousands of people will be accessing the scorecard, so you want to make sure that the cache is always up to date.",
+              ],
+            },
+          ],
+        },
+        {
+          type: "flow",
+          width: 620,
+          height: 510,
+          nodes: [
+            {
+              id: "score",
+              label: "New score",
+              sub: "cricket match scorecard",
+              icon: LuTrophy,
+              x: 310,
+              y: 50,
+              w: 240,
+              h: 64,
+            },
+            {
+              id: "api",
+              label: "API server",
+              icon: LuServer,
+              x: 310,
+              y: 170,
+              w: 200,
+              h: 64,
+            },
+            {
+              id: "db",
+              label: "Database",
+              icon: LuDatabase,
+              x: 150,
+              y: 320,
+              w: 170,
+              h: 90,
+              kind: "db",
+            },
+            {
+              id: "cache",
+              label: "Cache",
+              sub: "scorecard always up to date",
+              icon: LuZap,
+              x: 470,
+              y: 320,
+              w: 220,
+              h: 100,
+              kind: "db",
+              tone: "accent",
+              glow: true,
+            },
+            {
+              id: "users",
+              label: "Thousands of users",
+              sub: "reading the scorecard",
+              icon: LuUsers,
+              x: 470,
+              y: 460,
+              w: 240,
+              h: 64,
+            },
+          ],
+          edges: [
+            { from: "score", to: "api", pulse: true },
+            { from: "api", to: "db", label: "write", anchor: "y" },
+            {
+              from: "api",
+              to: "cache",
+              label: "update at the same time",
+              anchor: "y",
+              pulse: true,
+              tone: "accent",
+            },
+            { from: "cache", to: "users", label: "read", tone: "good" },
+          ],
+        },
+      ],
+    },
+    {
+      title: "Push data before it is requested",
+      blocks: [
+        {
+          type: "list",
+          items: [
+            {
+              text: "**Push data before it is requested** - proactively push data to the cache before anyone asks for it (warming the cache).",
+              items: [
+                "Example - caching a list of the top 10 trending blogs.",
+                "A cron job runs every 5 minutes, fetches the top 10 trending blogs from the database and pushes them to the cache.",
+                "This way, when a user requests the top 10 trending blogs, they are served from the cache instead of hitting the database.",
+              ],
+            },
+          ],
+        },
+        {
+          type: "flow",
+          width: 920,
+          height: 340,
+          nodes: [
+            {
+              id: "cron",
+              label: "Cron job",
+              sub: "every 5 minutes",
+              icon: LuCalendarClock,
+              x: 130,
+              y: 90,
+              w: 200,
+              h: 64,
+            },
+            {
+              id: "db",
+              label: "Database",
+              sub: "all the blogs",
+              icon: LuDatabase,
+              x: 470,
+              y: 90,
+              w: 190,
+              h: 100,
+              kind: "db",
+            },
+            {
+              id: "cache",
+              label: "Cache",
+              sub: "top 10 trending blogs",
+              icon: LuZap,
+              x: 790,
+              y: 90,
+              w: 190,
+              h: 100,
+              kind: "db",
+              tone: "accent",
+              glow: true,
+            },
+            {
+              id: "user",
+              label: "User",
+              icon: LuUser,
+              x: 790,
+              y: 275,
+              w: 72,
+              kind: "circle",
+            },
+          ],
+          edges: [
+            {
+              from: "cron",
+              to: "db",
+              label: "fetch the top 10",
+              pulse: true,
+              tone: "accent",
+            },
+            {
+              from: "db",
+              to: "cache",
+              label: "push",
+              pulse: true,
+              tone: "accent",
+            },
+            {
+              from: "user",
+              to: "cache",
+              label: "request the top 10",
+              tone: "good",
+            },
+            {
+              from: "user",
+              to: "db",
+              label: "does not hit the database",
+              via: [[470, 275]],
+              blocked: true,
+              tone: "bad",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      title: "Scaling the Cache",
+      blocks: [
+        {
+          type: "list",
+          items: [
+            {
+              text: "A cache is very similar to a regular database, so the scaling techniques are similar to those of a database.",
+              items: [
+                {
+                  text: "Vertical scaling",
+                  items: [
+                    "Increase the resources of the cache server (CPU, RAM, disk) to handle more requests.",
+                    "A simple approach, but it has its limits.",
+                  ],
+                },
+                {
+                  text: "Horizontal scaling",
+                  items: [
+                    "**Read replicas** - create multiple read replicas of the cache server to handle more read requests. A good approach for read-heavy workloads.",
+                    "**Sharding** - split the data across multiple cache servers based on a sharding key. A good approach for write-heavy workloads.",
+                  ],
+                },
+              ],
+            },
+            "Shards are mutually exclusive, meaning that a particular key will only exist in one shard.",
+          ],
+        },
+        {
+          type: "flow",
+          width: 710,
+          height: 500,
+          nodes: [
+            {
+              id: "cache",
+              label: "Cache",
+              icon: LuZap,
+              x: 350,
+              y: 60,
+              w: 160,
+              h: 100,
+              kind: "db",
+              tone: "accent",
+              glow: true,
+            },
+            {
+              id: "vertical",
+              label: "Vertical Scaling",
+              sub: "more CPU, RAM, disk",
+              icon: LuChevronsUp,
+              x: 170,
+              y: 230,
+              w: 280,
+              h: 64,
+            },
+            {
+              id: "limits",
+              label: "has its limits",
+              x: 170,
+              y: 295,
+              w: 130,
+              h: 32,
+              kind: "chip",
+              tone: "bad",
+            },
+            {
+              id: "horizontal",
+              label: "Horizontal Scaling",
+              sub: "more cache servers",
+              icon: LuServer,
+              x: 530,
+              y: 230,
+              w: 280,
+              h: 64,
+            },
+            {
+              id: "replicas",
+              label: "Read Replicas",
+              sub: "read-heavy workloads",
+              icon: LuCopy,
+              x: 300,
+              y: 400,
+              w: 250,
+              h: 64,
+            },
+            {
+              id: "sharding",
+              label: "Sharding",
+              sub: "write-heavy workloads",
+              icon: LuSplit,
+              x: 570,
+              y: 400,
+              w: 250,
+              h: 64,
+            },
+            {
+              id: "exclusive",
+              label: "a key exists in only one shard",
+              x: 570,
+              y: 465,
+              w: 240,
+              h: 32,
+              kind: "chip",
+              tone: "accent",
+            },
+          ],
+          edges: [
+            { from: "cache", to: "vertical", anchor: "y" },
+            { from: "cache", to: "horizontal", anchor: "y", pulse: true },
+            { from: "horizontal", to: "replicas", anchor: "y" },
+            { from: "horizontal", to: "sharding", anchor: "y" },
+          ],
+        },
+      ],
+    },
+  ],
+};
