@@ -11,6 +11,8 @@ import { NonRelationalDatabases } from "./09-non-relational-databases";
 import { PickingTheRightDatabase } from "./10-picking-the-right-database";
 import { Caching } from "./11-caching";
 import { PopulatingTheCacheAndScaling } from "./12-populating-the-cache-and-scaling";
+import { CachingAtDifferentLevel } from "./13-caching-at-different-level";
+import { AsynchronousProcessing } from "./14-asynchronous-processing";
 
 export const HldTrack: ILearningTrack = {
   id: "hld",
@@ -29,5 +31,7 @@ export const HldTrack: ILearningTrack = {
     PickingTheRightDatabase,
     Caching,
     PopulatingTheCacheAndScaling,
+    CachingAtDifferentLevel,
+    AsynchronousProcessing,
   ],
 };
