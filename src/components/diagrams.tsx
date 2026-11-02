@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { LuKeyRound, LuLink, LuRabbit, LuSnail } from "react-icons/lu";
 import {
   DiagramTone,
@@ -78,6 +78,10 @@ const tones: Record<
 
 const SHADOW = "shadow-[0_12px_32px_-16px_var(--shadow)]";
 
+/** Measures before paint in the browser; the server has nothing to measure. */
+export const useIsoLayoutEffect =
+  typeof window === "undefined" ? useEffect : useLayoutEffect;
+
 /**
  * Scales a fixed-size visual down to whatever room the slide layout leaves it,
  * so diagrams can be drawn at one size and still never spill out of a slide.
@@ -121,6 +125,7 @@ export const FitBox = ({
     >
       <div
         ref={inner}
+        data-fit="scalable"
         className="w-max shrink-0"
         style={{
           transform: `scale(${scale ?? 1})`,
@@ -129,6 +134,93 @@ export const FitBox = ({
       >
         {children}
       </div>
+    </div>
+  );
+};
+
+/**
+ * Shrinks its content until it fits the box it sits in, so a label that is
+ * a little too long for its node stays inside the node instead of spilling
+ * out of it. Content is never enlarged. The box is the parent element; in a
+ * column box the room left after the siblings is what counts.
+ *
+ * Text wraps as usual first. If that still overflows, a child marked
+ * `data-nowrap` is tried on one line, and whichever needs less shrinking
+ * wins.
+ */
+export const FitText = ({
+  children,
+  className = "",
+  origin = "center",
+}: {
+  children: React.ReactNode;
+  className?: string;
+  origin?: "left" | "center";
+}) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useIsoLayoutEffect(() => {
+    const el = ref.current;
+    const box = el?.parentElement;
+    if (!el || !box) return;
+    const measure = () => {
+      const style = getComputedStyle(box);
+      let height =
+        box.clientHeight -
+        parseFloat(style.paddingTop) -
+        parseFloat(style.paddingBottom);
+      if (style.flexDirection === "column") {
+        const gap = parseFloat(style.rowGap) || 0;
+        for (const sibling of Array.from(box.children)) {
+          if (sibling !== el) {
+            height -= (sibling as HTMLElement).offsetHeight + gap;
+          }
+        }
+      }
+      const next = Math.min(
+        1,
+        el.clientWidth / Math.max(el.scrollWidth, 1),
+        height / Math.max(el.offsetHeight, 1),
+      );
+      return next > 0 ? next : 1;
+    };
+    const fit = () => {
+      const label = el.querySelector<HTMLElement>("[data-nowrap]");
+      if (label) label.style.whiteSpace = "";
+      const wrapped = measure();
+      if (wrapped >= 1 || !label) {
+        setScale(wrapped);
+        return;
+      }
+      label.style.whiteSpace = "nowrap";
+      const straight = measure();
+      if (straight > wrapped) {
+        setScale(straight);
+        return;
+      }
+      label.style.whiteSpace = "";
+      setScale(wrapped);
+    };
+    fit();
+    document.fonts?.ready.then(fit);
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      data-fit-scale={scale < 1 ? scale.toFixed(2) : undefined}
+      className={`min-w-0 ${className}`}
+      style={
+        scale < 1
+          ? {
+              transform: `scale(${scale})`,
+              transformOrigin: origin === "left" ? "left center" : "center",
+            }
+          : undefined
+      }
+    >
+      {children}
     </div>
   );
 };
@@ -446,11 +538,24 @@ const IconChip = ({
   </span>
 );
 
-const NodeText = ({ node, center }: { node: IFlowNode; center?: boolean }) => (
-  <div
-    className={`flex min-w-0 flex-col ${center ? "items-center text-center" : ""}`}
+/** tile and shape nodes put the text under the icon, where it always wraps. */
+const NodeText = ({
+  node,
+  center,
+  wrap,
+}: {
+  node: IFlowNode;
+  center?: boolean;
+  wrap?: boolean;
+}) => (
+  <FitText
+    origin={center ? "center" : "left"}
+    className={`flex flex-col ${center ? "items-center text-center" : ""}`}
   >
-    <span className="text-[15px] font-medium leading-tight text-ink">
+    <span
+      data-nowrap={wrap ? undefined : ""}
+      className="text-[15px] font-medium leading-tight text-ink"
+    >
       {node.label}
     </span>
     {node.sub && (
@@ -458,7 +563,7 @@ const NodeText = ({ node, center }: { node: IFlowNode; center?: boolean }) => (
         {node.sub}
       </span>
     )}
-  </div>
+  </FitText>
 );
 
 /** A shape drawn in SVG behind the node's text: cylinders, diamonds, hexagons. */
@@ -551,7 +656,7 @@ const ShapeNode = ({
             className={tone === "default" ? "text-ink/70" : tones[tone].text}
           />
         )}
-        <NodeText node={node} center />
+        <NodeText node={node} center wrap />
       </div>
     </>
   );
@@ -592,7 +697,7 @@ const Node = ({ node, index }: { node: IFlowNode; index: number }) => {
       break;
     case "chip":
       shell += ` flex items-center justify-center px-3 text-[12px] font-medium ${tone === "default" ? "text-ink/70" : styles.text}`;
-      content = node.label;
+      content = <FitText className="whitespace-nowrap">{node.label}</FitText>;
       break;
     case "ghost":
       shell = "rounded-2xl border border-dashed border-ink/30 bg-canvas";
@@ -611,7 +716,7 @@ const Node = ({ node, index }: { node: IFlowNode; index: number }) => {
       content = (
         <div className="flex h-full w-full flex-col items-start gap-3 p-4">
           {node.icon && <IconChip icon={node.icon} tone={tone} />}
-          <NodeText node={node} />
+          <NodeText node={node} wrap />
         </div>
       );
       break;
@@ -687,9 +792,13 @@ export const FlowDiagram = ({
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            <span className="absolute -top-3 left-5 rounded-full border border-ink/15 bg-canvas px-3 py-0.5 text-[11px] uppercase tracking-widest text-ink/55">
-              {group.label}
-            </span>
+            <div className="absolute -top-3 left-5 right-5 flex h-[22px] items-center">
+              <FitText origin="left">
+                <span className="whitespace-nowrap rounded-full border border-ink/15 bg-canvas px-3 py-0.5 text-[11px] uppercase tracking-widest text-ink/55">
+                  {group.label}
+                </span>
+              </FitText>
+            </div>
           </motion.div>
         );
       })}
@@ -831,9 +940,14 @@ export const SequenceDiagram = ({
           transition={{ duration: 0.45, delay: index * 0.08, ease: EASE }}
         >
           {actor.icon && <IconChip icon={actor.icon} tone="default" />}
-          <span className="text-[14px] font-medium leading-tight text-ink">
-            {actor.label}
-          </span>
+          <FitText origin="left">
+            <span
+              data-nowrap=""
+              className="text-[14px] font-medium leading-tight text-ink"
+            >
+              {actor.label}
+            </span>
+          </FitText>
         </motion.div>
       ))}
       {rows.map(({ step, y }, index) => {
@@ -1042,58 +1156,61 @@ export const CardGrid = ({
   const reduceMotion = useReducedMotion();
   const gap = 20;
   return (
-    <div
-      className="flex h-full w-full flex-wrap content-center justify-center"
-      style={{ gap }}
-    >
-      {items.map((item, index) => {
-        const tone = item.tone ?? "default";
-        return (
-          <motion.div
-            key={item.title}
-            initial={reduceMotion ? false : { opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.08, ease: EASE }}
-            className={`flex flex-col gap-3 rounded-2xl border bg-panel p-5 ${SHADOW} ${tones[tone].card}`}
-            style={{
-              width: `calc((100% - ${(columns - 1) * gap}px) / ${columns})`,
-            }}
-          >
-            {item.badge ? (
-              <span className="bg-gradient-to-br from-blue-400 to-blue-600 bg-clip-text font-serif text-[56px] leading-none text-transparent">
-                {item.badge}
+    <div className="flex h-full w-full items-center justify-center">
+      <div
+        data-fit="natural"
+        className="flex w-full flex-wrap justify-center"
+        style={{ gap }}
+      >
+        {items.map((item, index) => {
+          const tone = item.tone ?? "default";
+          return (
+            <motion.div
+              key={item.title}
+              initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.08, ease: EASE }}
+              className={`flex flex-col gap-3 rounded-2xl border bg-panel p-5 ${SHADOW} ${tones[tone].card}`}
+              style={{
+                width: `calc((100% - ${(columns - 1) * gap}px) / ${columns})`,
+              }}
+            >
+              {item.badge ? (
+                <span className="bg-gradient-to-br from-blue-400 to-blue-600 bg-clip-text font-serif text-[56px] leading-none text-transparent">
+                  {item.badge}
+                </span>
+              ) : (
+                item.icon && <IconChip icon={item.icon} tone={tone} />
+              )}
+              <span className="text-[18px] font-medium leading-tight text-ink">
+                {item.title}
               </span>
-            ) : (
-              item.icon && <IconChip icon={item.icon} tone={tone} />
-            )}
-            <span className="text-[18px] font-medium leading-tight text-ink">
-              {item.title}
-            </span>
-            {item.text && (
-              <span className="text-[14.5px] font-light leading-relaxed text-ink/60">
-                {item.text}
-              </span>
-            )}
-            {item.meta && (
-              <div className="mt-1 flex flex-col">
-                {item.meta.map((row) => (
-                  <div
-                    key={row.label}
-                    className="flex items-center justify-between gap-4 border-t border-ink/10 py-3"
-                  >
-                    <span className="text-[11px] uppercase tracking-widest text-ink/45">
-                      {row.label}
-                    </span>
-                    <span className="text-[17px] font-medium text-ink">
-                      {row.value}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </motion.div>
-        );
-      })}
+              {item.text && (
+                <span className="text-[14.5px] font-light leading-relaxed text-ink/60">
+                  {item.text}
+                </span>
+              )}
+              {item.meta && (
+                <div className="mt-1 flex flex-col">
+                  {item.meta.map((row) => (
+                    <div
+                      key={row.label}
+                      className="flex items-center justify-between gap-4 border-t border-ink/10 py-3"
+                    >
+                      <span className="text-[11px] uppercase tracking-widest text-ink/45">
+                        {row.label}
+                      </span>
+                      <span className="text-[17px] font-medium text-ink">
+                        {row.value}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          );
+        })}
+      </div>
     </div>
   );
 };

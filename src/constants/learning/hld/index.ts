@@ -13,6 +13,7 @@ import { Caching } from "./11-caching";
 import { PopulatingTheCacheAndScaling } from "./12-populating-the-cache-and-scaling";
 import { CachingAtDifferentLevel } from "./13-caching-at-different-level";
 import { AsynchronousProcessing } from "./14-asynchronous-processing";
+import { MessageStreams } from "./15-message-streams";
 
 export const HldTrack: ILearningTrack = {
   id: "hld",
@@ -33,5 +34,6 @@ export const HldTrack: ILearningTrack = {
     PopulatingTheCacheAndScaling,
     CachingAtDifferentLevel,
     AsynchronousProcessing,
+    MessageStreams,
   ],
 };

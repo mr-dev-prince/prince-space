@@ -105,6 +105,11 @@ before drawing.
   with four checks ("3. For each sub-component look into"), a pill over a
   row of tiles ("Large Problem → Top-down"), a vertical checklist ("How to
   approach System Design?").
+- Text never spills out of a node: a label that does not fit is shrunk,
+  and put on one line when that needs less shrinking. Group labels always
+  stay on one line. Shrunk text is small, so size the node for its text
+  rather than relying on this; a node that shrinks its text carries a
+  `data-fit-scale` attribute you can look for in the inspector.
 
 Icons come from `react-icons/lu` only. Keep one icon per concept across
 topics:
@@ -159,6 +164,12 @@ git checkout -- tsconfig.tsbuildinfo   # tsc rewrites it; do not commit that
 Then open `/learning` with `next dev` and step through the new topic. Every
 node should sit inside its diagram and nothing should overlap. Do not commit
 unless asked.
+
+A slide whose content needs more room than the canvas (a long list, a cards
+grid with many meta rows, text stacked over a diagram) is laid out on a
+larger canvas and scaled down as a whole, so nothing is clipped or hidden
+under the progress bar. It still reads as a dense slide: if the body shows a
+`data-fit-scale` below about 0.85 in the inspector, split the slide instead.
 
 ## Checklist
 

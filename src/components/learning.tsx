@@ -24,6 +24,7 @@ import {
   FlowDiagram,
   SequenceDiagram,
   SpectrumDiagram,
+  useIsoLayoutEffect,
 } from "./diagrams";
 import { LearningTracks } from "../constants/learning";
 import HorizontalLines from "./horizontal-lines";
@@ -32,6 +33,11 @@ import LinkButton from "./link-button";
 /** Slides are laid out at this size and scaled to the screen, like a projector. */
 const CANVAS_W = 1280;
 const CANVAS_H = 720;
+/** A stacked diagram keeps at least this much height before the slide scales down. */
+const MIN_VISUAL = 240;
+/** gap-5 between text blocks, gap-6 between stacked blocks. */
+const TEXT_GAP = 20;
+const BLOCK_GAP = 24;
 
 type Position = { topic: number; slide: number };
 type Direction = { x: number; y: number };
@@ -164,6 +170,117 @@ const Block = ({ block }: { block: SlideBlock }) => {
   }
 };
 
+/**
+ * The body below the title. When its content needs more room than the canvas
+ * leaves, it is laid out on a larger canvas and scaled down - the projector
+ * model one level down - so nothing is clipped or pushed under the progress
+ * bar. Text re-wraps as the body widens, so the scale settles in a few passes.
+ */
+const SlideBody = ({
+  split,
+  text,
+  visuals,
+}: {
+  split: boolean;
+  text: SlideBlock[];
+  visuals: SlideBlock[];
+}) => {
+  const box = useRef<HTMLDivElement>(null);
+  const body = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useIsoLayoutEffect(() => {
+    const outer = box.current;
+    const inner = body.current;
+    if (!outer || !inner) return;
+
+    /** Height the content needs at the body's current width. */
+    const required = () => {
+      const textBox = inner.querySelector<HTMLElement>("[data-slot='text']");
+      const blocks = textBox
+        ? (Array.from(textBox.children) as HTMLElement[])
+        : [];
+      const textNeed =
+        blocks.reduce((sum, block) => sum + block.offsetHeight, 0) +
+        TEXT_GAP * Math.max(blocks.length - 1, 0);
+      const visualNeeds = Array.from(
+        inner.querySelectorAll<HTMLElement>("[data-slot='visual']"),
+      ).map((visual) => {
+        const content = visual.querySelector<HTMLElement>("[data-fit]");
+        if (!content) return MIN_VISUAL;
+        // Cards must show whole; a diagram may shrink, but only so far.
+        return content.dataset.fit === "natural"
+          ? content.offsetHeight
+          : Math.min(content.offsetHeight, MIN_VISUAL);
+      });
+      const visualNeed =
+        visualNeeds.reduce((sum, need) => sum + need, 0) +
+        BLOCK_GAP * Math.max(visualNeeds.length - 1, 0);
+      if (split) return Math.max(textNeed, visualNeed);
+      return textNeed + visualNeed + (textNeed && visualNeed ? BLOCK_GAP : 0);
+    };
+
+    const fit = () => {
+      const height = outer.clientHeight;
+      if (!outer.clientWidth || !height) return;
+      let next = 1;
+      for (let pass = 0; pass < 4; pass++) {
+        inner.style.width = `${100 / next}%`;
+        inner.style.height = `${100 / next}%`;
+        const need = required();
+        // A hair of overflow lands in the bottom padding; not worth a rescale.
+        const fitted = need <= height * 1.015 ? 1 : height / need;
+        if (Math.abs(fitted - next) < 0.005) break;
+        next = fitted;
+      }
+      inner.style.width = `${100 / next}%`;
+      inner.style.height = `${100 / next}%`;
+      setScale(next);
+    };
+    fit();
+    document.fonts?.ready.then(fit);
+  }, [split]);
+
+  return (
+    <div ref={box} className="relative mt-8 min-h-0 flex-1">
+      <div
+        ref={body}
+        data-fit-scale={scale < 1 ? scale.toFixed(2) : undefined}
+        className={`absolute left-0 top-0 flex origin-top-left ${split ? "gap-14" : "flex-col gap-6"}`}
+        style={{
+          width: `${100 / scale}%`,
+          height: `${100 / scale}%`,
+          transform: `scale(${scale})`,
+        }}
+      >
+        {text.length > 0 && (
+          <div
+            data-slot="text"
+            className={`flex flex-col gap-5 ${split ? "w-[440px] shrink-0 justify-center" : ""}`}
+          >
+            {text.map((block, index) => (
+              <Block key={index} block={block} />
+            ))}
+          </div>
+        )}
+        {visuals.length > 0 && (
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-6">
+            {visuals.map((block, index) => (
+              <div
+                key={index}
+                data-slot="visual"
+                className="flex min-h-0 flex-1"
+              >
+                <Block block={block} />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const Slide = ({
   slide,
   topic,
@@ -197,28 +314,7 @@ const Slide = ({
       <h2 className="mt-5 font-serif text-[46px] leading-[1.12] tracking-wide text-ink">
         {slide.title}
       </h2>
-      <div
-        className={`mt-8 flex min-h-0 flex-1 ${split ? "gap-14" : "flex-col gap-6"}`}
-      >
-        {text.length > 0 && (
-          <div
-            className={`flex flex-col gap-5 ${split ? "w-[440px] shrink-0 justify-center" : ""}`}
-          >
-            {text.map((block, index) => (
-              <Block key={index} block={block} />
-            ))}
-          </div>
-        )}
-        {visuals.length > 0 && (
-          <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-6">
-            {visuals.map((block, index) => (
-              <div key={index} className="flex min-h-0 flex-1">
-                <Block block={block} />
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      <SlideBody split={split} text={text} visuals={visuals} />
       {slideCount > 1 && (
         <div className="absolute inset-x-[72px] bottom-[30px] flex gap-1.5">
           {topic.slides.map((_, index) => (
